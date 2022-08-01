@@ -1,8 +1,8 @@
-WIDGET = {
+  WIDGET = {
     "CONFIG": {
-      "modules": "0124",
+      "modules": "01234",
       "background": "5",
-      "tmpColor": "FFFFFF",
+      "tmpColor": "FF9900",
       "tmpSize": "16",
       "cityColor": "FFFFFF",
       "citySize": "16",
@@ -15,8 +15,8 @@ WIDGET = {
       "language": "auto",
       "borderRadius": "5",
       "fixed": "false",
-      "vertical": "top",
-      "horizontal": "left",
+      "vertical": "center",
+      "horizontal": "center",
       "key": "4e62b591cec44e1da4345b9d128b716d"
     }
   }
