@@ -2,7 +2,7 @@
     "CONFIG": {
       "modules": "01234",
       "background": "5",
-      "tmpColor": "#2C323C",
+      "tmpColor": "FF9900",
       "tmpSize": "16",
       "cityColor": "#2C323C",
       "citySize": "16",
