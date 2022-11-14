@@ -61,7 +61,7 @@ const musicData = [
  */
 
 const addEventOnElements = function (elements, eventType, callback) {
-  for (let i = 0, len = elements.length; i &lt; len; i++) {
+  for (let i = 0, len = elements.length; i < len; i++) {
     elements[i].addEventListener(eventType, callback);
   }
 }
@@ -76,11 +76,12 @@ const addEventOnElements = function (elements, eventType, callback) {
 
 const playlist = document.querySelector("[data-music-list]");
 
-for (let i = 0, len = musicData.length; i &lt; len; i++) {
+for (let i = 0, len = musicData.length; i < len; i++) {
   playlist.innerHTML += `
   <li>
-    <button class="music-item ${i === 0 ? " playing"="" :="" ""}"="" data-playlist-toggler="" data-playlist-item="${i}">
-      <img src="${musicData[i].posterUrl}" width="800" height="800" alt="${musicData[i].title} Album Poster" class="img-cover">
+    <button class="music-item ${i === 0 ? "playing" : ""}" data-playlist-toggler data-playlist-item="${i}">
+      <img src="${musicData[i].posterUrl}" width="800" height="800" alt="${musicData[i].title} Album Poster"
+        class="img-cover">
 
       <div class="item-icon">
         <span class="material-symbols-rounded">equalizer</span>
@@ -177,7 +178,7 @@ const playerSeekRange = document.querySelector("[data-seek]");
 const getTimecode = function (duration) {
   const minutes = Math.floor(duration / 60);
   const seconds = Math.ceil(duration - (minutes * 60));
-  const timecode = `${minutes}:${seconds &lt; 10 ? "0" : ""}${seconds}`;
+  const timecode = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   return timecode;
 }
 
@@ -292,7 +293,7 @@ const skipNext = function () {
   if (isShuffled) {
     shuffleMusic();
   } else {
-    currentMusic &gt;= musicData.length - 1 ? currentMusic = 0 : currentMusic++;
+    currentMusic >= musicData.length - 1 ? currentMusic = 0 : currentMusic++;
   }
 
   changePlayerInfo();
@@ -315,7 +316,7 @@ const skipPrev = function () {
   if (isShuffled) {
     shuffleMusic();
   } else {
-    currentMusic &lt;= 0 ? currentMusic = musicData.length - 1 : currentMusic--;
+    currentMusic <= 0 ? currentMusic = musicData.length - 1 : currentMusic--;
   }
 
   changePlayerInfo();
@@ -331,9 +332,9 @@ playerSkipPrevBtn.addEventListener("click", skipPrev);
  */
 
 /** get random number for shuffle */
-const getRandomMusic = () =&gt; Math.floor(Math.random() * musicData.length);
+const getRandomMusic = () => Math.floor(Math.random() * musicData.length);
 
-const shuffleMusic = () =&gt; currentMusic = getRandomMusic();
+const shuffleMusic = () => currentMusic = getRandomMusic();
 
 const playerShuffleBtn = document.querySelector("[data-shuffle]");
 let isShuffled = false;
@@ -381,9 +382,9 @@ const changeVolume = function () {
   audioSource.volume = playerVolumeRange.value;
   audioSource.muted = false;
 
-  if (audioSource.volume &lt;= 0.1) {
+  if (audioSource.volume <= 0.1) {
     playerVolumeBtn.children[0].textContent = "volume_mute";
-  } else if (audioSource.volume &lt;= 0.5) {
+  } else if (audioSource.volume <= 0.5) {
     playerVolumeBtn.children[0].textContent = "volume_down";
   } else {
     playerVolumeBtn.children[0].textContent = "volume_up";
