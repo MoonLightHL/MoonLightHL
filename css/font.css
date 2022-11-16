@@ -7,11 +7,17 @@
   body {
     font-family: 'aqqxs';
   }
+  h1#site-title {
+    font-family: 'aqqxs', sans-serif;
+}
 
   #footer {
     /* 与背景渐变效果一致*/
     background: rgba(0, 0, 0, 0);
   }
+  #footer:before {
+    background-color: rgba(0, 0, 0, 0);
+}
   #footer .copyright{
     color: #2F3C4B
   }
