@@ -1,12 +1,3 @@
-@font-face{
-    font-family:'PingFang' ;  /* 字体名自定义即可 */
-    src:url('https://cdn.jsdelivr.net/gh/Amnesia-f/jsDelivr_CDN/font/苹方字体.ttf'); /* 字体文件路径 */
-    font-display : swap;
-  }
-  
-  h1#site-title {
-    font-family: 'Candyhome', sans-serif;
-  }
 
   @font-face {
     font-family: 'aqqxs';
@@ -16,3 +7,17 @@
   body {
     font-family: 'aqqxs';
   }
+
+  #footer {
+    /* 与背景渐变效果一致*/
+    background: rgba(0, 0, 0, 0);
+  }
+  #footer .copyright{
+    color: #2F3C4B
+  }
+  #footer .footer_custom_text{
+    color: #2F3C4B;
+
+  }
+
+

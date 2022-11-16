@@ -47,7 +47,7 @@
 
   #footer {
       /* 与背景渐变效果一致*/
-      background-image: rgba(0, 0, 0, 0);
+      background: rgba(0, 0, 0, 0);
   }
   
   #footer:before {
