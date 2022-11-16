@@ -7,3 +7,12 @@
   h1#site-title {
     font-family: 'Candyhome', sans-serif;
   }
+
+  @font-face {
+    font-family: 'aqqxs';
+    font-display: swap;
+    src: url('../fonts/by_aqqxs.6913918b.woff2') format("woff2");
+  }
+  body {
+    font-family: 'aqqxs';
+  }
