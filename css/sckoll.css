@@ -43,3 +43,13 @@
   div#post{
     background: rgba(44, 50, 60, 0.5)!important;
     }
+
+
+  #footer {
+      /* 与背景渐变效果一致*/
+      background-image: rgba(0, 0, 0, 0);
+  }
+  
+  #footer:before {
+      background-color: rgba(0, 0, 0, 0);
+  }
