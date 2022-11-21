@@ -1,0 +1,343 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU | MoonLight</title><meta name="keywords" content="Pytorch"><meta name="author" content="MoonLight"><meta name="copyright" content="MoonLight"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="图形处理单元 （GPU） 提示塊標籤   要了解CUDA，我们需要具备图形处理单元（GPU）的工作知识。GPU是一种擅长处理专业计算的处理器。 这与中央处理器（CPU）形成鲜明对比，中央处理器是一种擅长处理一般计算的处理器。CPU是为我们电子设备上大多数典型计算提供动力的处理器。 GPU的计算速度比CPU快得多。但是，情况并非总是如此。GPU 相对于 CPU 的速度取决于所执行的计算类型。最适合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU">
+<meta property="og:url" content="https://moonlighthl.github.io/20221121-21text.html">
+<meta property="og:site_name" content="MoonLight">
+<meta property="og:description" content="图形处理单元 （GPU） 提示塊標籤   要了解CUDA，我们需要具备图形处理单元（GPU）的工作知识。GPU是一种擅长处理专业计算的处理器。 这与中央处理器（CPU）形成鲜明对比，中央处理器是一种擅长处理一般计算的处理器。CPU是为我们电子设备上大多数典型计算提供动力的处理器。 GPU的计算速度比CPU快得多。但是，情况并非总是如此。GPU 相对于 CPU 的速度取决于所执行的计算类型。最适合">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://moonlighthl.github.io/img/404.jpg">
+<meta property="article:published_time" content="2022-11-21T11:52:22.000Z">
+<meta property="article:modified_time" content="2022-11-21T12:32:45.093Z">
+<meta property="article:author" content="MoonLight">
+<meta property="article:tag" content="Pytorch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://moonlighthl.github.io/img/404.jpg"><link rel="shortcut icon" href="/img/header-img.svg"><link rel="canonical" href="https://moonlighthl.github.io/20221121-21text"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/css/font.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: MoonLight","link":"链接: ","source":"来源: MoonLight","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-11-21 20:32:45'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/sckoll.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiperstyle.css" media="print" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/MoonLight.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-folder"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-folder-open"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-layer-group"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 其它</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/datepage/player/index.html"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/datepage/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/datepage/calendar1/index.html"><i class="fa-fw fas fa-calendar"></i><span> 日历1</span></a></li><li><a class="site-page child" href="/datepage/calendar2/index.html"><i class="fa-fw fas fa-calendar"></i><span> 日历2</span></a></li><li><a class="site-page child" href="/datepage/clock1/index.html"><i class="fa-fw fas fa-clock"></i><span> 时钟1</span></a></li><li><a class="site-page child" href="/datepage/clock2/index.html"><i class="fa-fw fas fa-clock"></i><span> 时钟2</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/player/index.html"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">MoonLight</a></span><div id="he-plugin-simple"></div><div id="none_space">  </div><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-folder"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-folder-open"></i><span> 归档</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-layer-group"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 其它</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/datepage/player/index.html"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/datepage/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/datepage/calendar1/index.html"><i class="fa-fw fas fa-calendar"></i><span> 日历1</span></a></li><li><a class="site-page child" href="/datepage/calendar2/index.html"><i class="fa-fw fas fa-calendar"></i><span> 日历2</span></a></li><li><a class="site-page child" href="/datepage/clock1/index.html"><i class="fa-fw fas fa-clock"></i><span> 时钟1</span></a></li><li><a class="site-page child" href="/datepage/clock2/index.html"><i class="fa-fw fas fa-clock"></i><span> 时钟2</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/player/index.html"><i class="fa-fw fas fa-link"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-21T11:52:22.000Z" title="发表于 2022-11-21 19:52:22">2022-11-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-11-21T12:32:45.093Z" title="更新于 2022-11-21 20:32:45">2022-11-21</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><div class="note success flat"><p>图形处理单元 （GPU） 提示塊標籤</p>
+</div>
+
+<p>要了解CUDA，我们需要具备图形处理单元（GPU）的工作知识。GPU是一种擅长处理专业计算的处理器。</p>
+<p>这与中央处理器（CPU）形成鲜明对比，中央处理器是一种擅长处理一般计算的处理器。CPU是为我们电子设备上大多数典型计算提供动力的处理器。</p>
+<p>GPU的计算速度比CPU快得多。但是，情况并非总是如此。GPU 相对于 CPU 的速度取决于所执行的计算类型。最适合 GPU 的计算类型是可以并行完成的计算。</p>
+<div class="note success flat"><p>并行计算</p>
+</div>
+
+<p>并行计算是一种计算类型，其中通过特定计算被分解为可以同时执行的独立较小计算。然后，将生成的计算重新组合或同步，以形成原始较大计算的结果。</p>
+<p><img src="/img/im1/1.png" alt="photo"></p>
+<p>大型任务可以分解的任务数取决于特定硬件上包含的内核数。内核是在给定处理器内实际执行计算的单元，CPU 通常具有四个、八个或十六个内核，而 GPU 可能具有数千个内核。</p>
+<p>还有其他重要的技术规范，但这种描述旨在推动总体思路。</p>
+<p>有了这些工作知识，我们可以得出结论，并行计算是使用GPU完成的，我们也可以得出结论，最适合使用GPU解决的任务是可以并行完成的任务。如果计算可以并行完成，我们可以使用并行编程方法和GPU加速计算。</p>
+<p>现在让我们把注意力转向神经网络，看看为什么GPU在深度学习中被如此频繁地使用。我们刚刚看到GPU非常适合并行计算，而关于GPU的这个事实就是深度学习使用它们的原因。</p>
+<p>在并行计算中，并行任务是几乎不需要花费或不需要任何精力将整个任务分成一组要并行计算的较小任务。</p>
+<p>令人尴尬地并行的任务是很容易看出一组较小的任务彼此独立。</p>
+<p><img src="/img/im1/2.png" alt="photo"></p>
+<p>由于这个原因，神经网络是尴尬的并行。我们使用神经网络进行的许多计算可以很容易地分解成较小的计算，使得较小的计算集不相互依赖。一个这样的例子是卷积。</p>
+<div class="note success flat"><p>卷积示例</p>
+</div>
+
+<p>让我们看一个例子，卷积运算：</p>
+<p><img src="/img/im1/3.gif" alt="photo"></p>
+<p>此动画展示了没有数字的卷积过程。我们在底部有一个蓝色的输入通道。底部阴影的卷积滤波器在输入通道上滑动，以及绿色输出通道：</p>
+<pre><code>蓝色（底部）- 输入通道
+阴影（蓝色顶部） - 3 x 3卷积核
+绿色（顶部）- 输出通道
+</code></pre>
+<p>对于蓝色输入通道上的每个位置，一个3 x 3卷积核执行计算，将蓝色输入通道的阴影部分映射到绿色输出通道的相应阴影部分。</p>
+<p>在动画中，这些计算依次发生。但是，每个计算都独立于其他计算，这意味着任何计算都不依赖于任何其他计算的结果。</p>
+<p>因此，所有这些独立计算都可以在GPU上并行进行，并且可以产生整个输出通道。<br>这使我们能够看到，通过使用并行编程方法和GPU可以加速卷积操作。</p>
+<div class="note success flat"><p>Nvidia硬件 （GPU） 和软件 （CUDA）</p>
+</div>
+
+<p>Nvidia是一家设计GPU的技术公司，他们将CUDA创建为一个软件平台，与他们的GPU硬件配对，使开发人员更容易构建使用Nvidia GPU的并行处理能力加速计算的软件。</p>
+<p><img src="/img/im1/4.png" alt="photo"></p>
+<p>Nvidia GPU是支持并行计算的硬件，而CUDA是为开发人员提供API的软件层。<br>因此，您可能已经猜到使用CUDA需要Nvidia GPU，并且CUDA可以从Nvidia的网站免费下载和安装。<br>开发人员通过下载 CUDA 工具包来使用 CUDA。随着工具包而来的是专门的库，如cuDNN，CUDA深度神经网络库。</p>
+<p><img src="/img/im1/5.png" alt="photo"></p>
+<div class="note success flat"><p>PyTorch 附带 CUDA</p>
+</div>
+
+<p>使用PyTorch或任何其他神经网络API的好处之一是，并行性融入了API中。这意味着作为神经网络程序员，我们可以更多地关注构建神经网络，而不是性能问题。</p>
+<p>有了PyTorch，CUDA从一开始就融入了。无需其他下载。我们所需要的只是有一个受支持的Nvidia GPU，我们可以使用PyTorch利用CUDA。我们不需要知道如何直接使用 CUDA API。</p>
+<p>现在，如果我们想编写PyTorch扩展，那么知道如何直接使用CUDA可能会很有用。<br>毕竟，PyTorch是用所有这些编写的：<br>    Python<br>    C++<br>    CUDA</p>
+<div class="note success flat"><p>将 CUDA 与 PyTorch 结合使用</p>
+</div>
+
+<p>在PyTorch中利用CUDA非常容易。如果我们想在GPU上执行特定的计算，我们可以通过在我们的数据结构（张量）上调用cuda()来指示PyTorch这样做。</p>
+<p>假设我们有以下代码：</p>
+<blockquote>
+<p>t = torch.tensor([1,2,3])<br>t<br>tensor([1, 2, 3])</p>
+</blockquote>
+<p>默认情况下，以这种方式创建的张量对象位于 CPU 上。因此，我们使用此张量对象执行的任何操作都将在 CPU 上执行。<br>现在，要将张量移动到GPU上，我们只需编写：</p>
+<blockquote>
+<p>t = t.cuda()<br>t<br>tensor([1, 2, 3], device=’cuda:0’)</p>
+</blockquote>
+<p>这种能力使PyTorch非常通用，因为计算可以在CPU或GPU上有选择地执行。</p>
+<div class="note success flat"><p>GPU 可能比 CPU 慢</p>
+</div>
+
+<p>我们说过，我们可以有选择地在GPU或CPU上运行计算，但为什么不直接在GPU上运行每个计算呢？</p>
+<p>GPU不是比CPU快吗？</p>
+<p>答案是，GPU仅针对特定任务更快。我们可能遇到的一个问题是降低性能的瓶颈。例如，将数据从 CPU移动到 GPU 的成本很高，因此在这种情况下，如果计算任务很简单，则整体性能可能会降低。</p>
+<p><img src="/img/im1/6.png" alt="photo"></p>
+<p>将相对较小的计算任务转移到GPU不会让我们加快速度，并且确实会减慢我们的速度。请记住，GPU适用于可以分解为许多较小任务的任务，如果计算任务已经很小，那么通过将任务移动到GPU，我们将没有太多收获。<br>出于这个原因，在刚开始时简单地使用CPU通常是可以接受的，并且随着我们处理更大更复杂的问题，开始更多地使用GPU。</p>
+<div class="note success flat"><p>GPGPU 计算</p>
+</div>
+
+<p>最初，使用GPU加速的主要任务是计算机图形学。因此得名图形处理单元，但近年来，出现了更多种类的并行任务。正如我们所看到的，其中一项任务是深度学习。<br>深度学习以及许多其他使用并行编程技术的科学计算任务正在导致一种称为GPGPU或通用GPU计算的新型编程模型。</p>
+<p>GPGPU计算通常只是称为GPU计算或加速计算，因为在GPU上预制各种任务变得越来越普遍。</p>
+<p>Nvidia一直是这一领域的先驱。Nvidia将通用GPU计算简称为GPU计算。Nvidia首席执行官黄仁勋（Jensen Huang）很早就设想了GPU计算，这就是为什么CUDA是在近10年前创建的。</p>
+<p>尽管CUDA已经存在了很长时间，但它现在才刚刚开始真正起飞，而Nvidia迄今为止在CUDA上的工作就是为什么Nvidia在深度学习的GPU计算方面处于领先地位。</p>
+<p>当我们听到Jensen谈论GPU计算堆栈时，他指的是GPU作为底部的硬件，CUDA作为GPU顶部的软件架构，最后是CUDA顶部的cuDNN等库。</p>
+<p>这个GPU计算堆栈是支持在一个原本非常专业的芯片上的通用计算能力。我们经常在计算机科学中看到这样的堆栈，因为技术是分层构建的，就像神经网络一样。<br>坐在CUDA和cuDNN之上的是PyTorch，这是我们将要工作的框架，最终支持顶部的应用程序。</p>
+<p>本文深入探讨了GPU计算和CUDA，但它比我们需要的要深入得多。我们将在这里使用PyTorch在堆栈顶部附近工作。</p>
+<p>注：以上内容翻译自<a target="_blank" rel="noopener" href="https://deeplizard.com/learn/video/6stDhEA0wFQ">https://deeplizard.com/learn/video/6stDhEA0wFQ</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://moonlighthl.github.io">MoonLight</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://moonlighthl.github.io/20221121-21text.html">https://moonlighthl.github.io/20221121-21text.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://moonlighthl.github.io" target="_blank">MoonLight</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Pytorch/">Pytorch</a></div><div class="post_share"></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/20221121-gitstudy.html"><img class="prev-cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">什么是git</div></div></a></div><div class="next-post pull-right"><a href="/20221119-19text.html"><img class="next-cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">19text</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/MoonLight.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">MoonLight</div><div class="author-info__description">还是要有梦想，万一实现了呢</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://email.163.com/" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://twitter.com/" target="_blank" title="twitter"><i class="fab fa-twitter"></i></a><a class="social-icon" href="https://www.bilibili.com/" target="_blank" title="bilibili"><i class="fab fa-bilibili"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog! welcome to you!</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/20221121-21cnn.html" title="21cnn"><img src="/img/404.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="21cnn"/></a><div class="content"><a class="title" href="/20221121-21cnn.html" title="21cnn">21cnn</a><time datetime="2022-11-21T12:27:53.000Z" title="发表于 2022-11-21 20:27:53">2022-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/20221121-gitstudy.html" title="什么是git"><img src="/img/404.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="什么是git"/></a><div class="content"><a class="title" href="/20221121-gitstudy.html" title="什么是git">什么是git</a><time datetime="2022-11-21T11:53:43.000Z" title="发表于 2022-11-21 19:53:43">2022-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/20221121-21text.html" title="Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU"><img src="/img/404.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU"/></a><div class="content"><a class="title" href="/20221121-21text.html" title="Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU">Pytorch学习笔记|CUDA 解释 - 深度学习为何使用 GPU</a><time datetime="2022-11-21T11:52:22.000Z" title="发表于 2022-11-21 19:52:22">2022-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/20221119-19text.html" title="19text"><img src="/img/404.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="19text"/></a><div class="content"><a class="title" href="/20221119-19text.html" title="19text">19text</a><time datetime="2022-11-19T14:39:16.000Z" title="发表于 2022-11-19 22:39:16">2022-11-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/20221117-12sd.html" title="12sd"><img src="/img/404.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="12sd"/></a><div class="content"><a class="title" href="/20221117-12sd.html" title="12sd">12sd</a><time datetime="2022-11-17T08:34:08.000Z" title="发表于 2022-11-17 16:34:08">2022-11-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By MoonLight</div><div class="footer_custom_text">故事从这里开始！</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4TLSw90cDz363Wu8LRcLBb5n-gzGzoHsz',
+      appKey: 'Y2KyahonI2qGWGrElgYDB4mN',
+      avatar: 'hide',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script src="/js/weather.js"></script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_swiper_injector_config(){
+    var parent_div_git = document.getElementById('recent-posts');
+    var item_html = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms;"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;20221020-c2.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="/img/404.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2022-10-20</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;20221020-c2.html&quot;);" href="javascript:void(0);" alt="">我的博客</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;20221020-c2.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;20220727-f5.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="https://qiniu.sukoshi.xyz/src/images/68686407_p0.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2022-07-27</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;20220727-f5.html&quot;);" href="javascript:void(0);" alt="">月明</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;20220727-f5.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;20220727-hello-world.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="/img/404.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2022-07-27</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;20220727-hello-world.html&quot;);" href="javascript:void(0);" alt="">Hello World</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;20220727-hello-world.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" onclick="pjax.loadUrl(&quot;20220727-first.html&quot;);" href="javascript:void(0);" alt=""><img width="48" height="48" src="/img/404.jpg" alt="" onerror="this.src=https://unpkg.zhimg.com/akilar-candyassets/image/loading.gif; this.onerror = null;"/></a><div class="blog-slider__content"><span class="blog-slider__code">2022-07-27</span><a class="blog-slider__title" onclick="pjax.loadUrl(&quot;20220727-first.html&quot;);" href="javascript:void(0);" alt="">第二个博客</a><div class="blog-slider__text">再怎么看我也不知道怎么描述它的啦！</div><a class="blog-slider__button" onclick="pjax.loadUrl(&quot;20220727-first.html&quot;);" href="javascript:void(0);" alt="">详情       </a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+    console.log('已挂载butterfly_swiper')
+    parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  var elist = 'undefined'.split(',');
+  var cpage = location.pathname;
+  var epage = '/';
+  var flag = 0;
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_swiper_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_swiper_injector_config();
+  }
+  </script><script defer src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper.min.js"></script><script defer data-pjax src="https://npm.elemecdn.com/hexo-butterfly-swiper/lib/swiper_init.js"></script><!-- hexo injector body_end end --></body></html>
